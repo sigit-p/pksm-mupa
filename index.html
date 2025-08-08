@@ -1,374 +1,75 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulasi Portal Belajar Google</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Calm Harmony (Slate & Sky) -->
-    <!-- Application Structure Plan: A single-page application with a primary navigation to switch between two simulated environments: "Portal Google Sites" and "Ruang Kelas Google Classroom". Each environment has its own internal navigation (e.g., Dashboard to Course Page in Sites, Stream to Classwork in Classroom). This structure is chosen to directly compare and contrast the two platforms as described in the source report, providing a clear, task-oriented user flow for understanding their combined potential. -->
-    <!-- Visualization & Content Choices:
-        - Report Info: Google Sites Dashboard -> Goal: Organize/Inform -> Viz: Grid of "Course Cards" -> Interaction: Click to navigate to course page -> Justification: Simulates the visual portal concept. -> Method: HTML/Tailwind, JS.
-        - Report Info: Google Sites Course Page -> Goal: Organize -> Viz: "Collapsible group" accordions -> Interaction: Click to expand/collapse topics -> Justification: Demonstrates tidy content organization. -> Method: HTML/Tailwind, JS.
-        - Report Info: Google Classroom Stream -> Goal: Inform -> Viz: Vertical timeline of posts -> Interaction: Visual only -> Justification: Mimics the social-media-like feed. -> Method: HTML/Tailwind.
-        - Report Info: Google Classroom Classwork -> Goal: Organize -> Viz: List of items grouped by topic -> Interaction: Click to open a modal with details -> Justification: Shows the structured task list. -> Method: HTML/Tailwind, JS.
-        - Added Feature: Student Engagement Chart -> Goal: Inform -> Viz: Bar Chart -> Interaction: Hover for tooltips -> Justification: Adds a modern data visualization element to the dashboard concept. -> Library: Chart.js.
-    -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f1f5f9; /* bg-slate-100 */
-        }
-        .chart-container {
-            position: relative;
-            width: 100%;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            height: 280px;
-            max-height: 320px;
-        }
-        .nav-active {
-            background-color: #0284c7; /* bg-sky-600 */
-            color: white;
-        }
-        .nav-inactive {
-            background-color: white;
-            color: #334155; /* text-slate-700 */
-        }
-        .subnav-active {
-            border-bottom-color: #0ea5e9; /* border-sky-500 */
-            color: #0369a1; /* text-sky-700 */
-            font-weight: 600;
-        }
-        .collapsible-content {
-            transition: max-height 0.3s ease-in-out, padding 0.3s ease-in-out;
-            max-height: 0;
-            overflow: hidden;
-        }
-        .collapsible-content.open {
-            max-height: 1000px; /* Large enough to fit content */
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login LMS PKSM TSM-SMK Mupa</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f4f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .login-box {
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      width: 300px;
+      text-align: center;
+    }
+    h2 {
+      margin-bottom: 1.5rem;
+    }
+    input[type="text"] {
+      padding: 0.5rem;
+      width: 100%;
+      margin-bottom: 1rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #0066cc;
+      color: white;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .error {
+      color: red;
+      margin-top: 1rem;
+    }
+  </style>
 </head>
-<body class="text-slate-800">
+<body>
+  <div class="login-box">
+    <h2>Login LMS PKSM</h2>
+    <p>Masukkan token kelas</p>
+    <input type="text" id="tokenInput" placeholder="Contoh: XTSM" />
+    <button onclick="login()">Masuk</button>
+    <div id="errorMsg" class="error"></div>
+  </div>
 
-    <!-- Main Container -->
-    <div class="min-h-screen">
-        <!-- Header -->
-        <header class="bg-white shadow-md sticky top-0 z-20">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex items-center justify-between h-16">
-                    <div class="flex items-center space-x-3">
-                        <div class="bg-sky-500 p-2 rounded-lg">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
-                        </div>
-                        <h1 class="text-xl font-bold text-slate-800">Simulasi Portal Belajar</h1>
-                    </div>
-                    <div class="flex items-center space-x-4">
-                        <span class="text-slate-600 hidden sm:block">Siswa Cerdas</span>
-                        <img class="h-10 w-10 rounded-full object-cover" src="https://placehold.co/100x100/E2E8F0/4A5568?text=SC" alt="Profil Siswa">
-                    </div>
-                </div>
-                <div class="bg-slate-50 border-t border-slate-200">
-                    <nav class="container mx-auto px-4 sm:px-6 lg:px-8 flex justify-center space-x-2 py-2">
-                        <button id="nav-sites" class="px-4 py-2 text-sm font-semibold rounded-full shadow-sm transition-colors duration-200 nav-active" onclick="switchPlatform('sites')">Portal Google Sites</button>
-                        <button id="nav-classroom" class="px-4 py-2 text-sm font-semibold rounded-full shadow-sm transition-colors duration-200 nav-inactive" onclick="switchPlatform('classroom')">Ruang Kelas Google Classroom</button>
-                    </nav>
-                </div>
-            </div>
-        </header>
+  <script>
+    function login() {
+      const token = document.getElementById('tokenInput').value.trim().toUpperCase();
+      const errorMsg = document.getElementById('errorMsg');
 
-        <!-- Dynamic Content Area -->
-        <main class="container mx-auto p-4 sm:p-6 lg:p-8">
-            <!-- Google Sites View -->
-            <div id="view-sites">
-                <!-- Sites Dashboard -->
-                <div id="sites-dashboard">
-                    <div class="text-center mb-8">
-                        <h2 class="text-3xl font-bold text-sky-600 mb-2">Portal Belajar Utama</h2>
-                        <p class="text-slate-500 max-w-2xl mx-auto">Selamat datang di portal belajar. Halaman ini berfungsi sebagai dashboard utama Anda, mirip dengan halaman depan Google Sites. Klik salah satu kartu kursus untuk melihat materi lebih detail.</p>
-                    </div>
-
-                    <h3 class="text-xl font-semibold text-slate-700 mb-4">Kartu Kursus Anda</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-                        <div class="bg-white rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 cursor-pointer" onclick="navigateToSiteCourse()">
-                            <img src="https://placehold.co/600x300/3b82f6/ffffff?text=Sains+Data" class="h-44 w-full object-cover" alt="Gambar kursus Sains Data">
-                            <div class="p-5">
-                                <h4 class="font-bold text-lg text-slate-800">Sains Data Pemula</h4>
-                                <p class="text-sm text-slate-500">Mempelajari dasar-dasar analisis data dan visualisasi.</p>
-                            </div>
-                        </div>
-                        <div class="bg-white rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 cursor-pointer">
-                             <img src="https://placehold.co/600x300/10b981/ffffff?text=Desain+Grafis" class="h-44 w-full object-cover" alt="Gambar kursus Desain Grafis">
-                            <div class="p-5">
-                                <h4 class="font-bold text-lg text-slate-800">Desain Grafis Fundamental</h4>
-                                <p class="text-sm text-slate-500">Prinsip-prinsip desain untuk media digital.</p>
-                            </div>
-                        </div>
-                        <div class="bg-white rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 cursor-pointer">
-                             <img src="https://placehold.co/600x300/f59e0b/ffffff?text=Manajemen" class="h-44 w-full object-cover" alt="Gambar kursus Manajemen Proyek">
-                            <div class="p-5">
-                                <h4 class="font-bold text-lg text-slate-800">Manajemen Proyek Agile</h4>
-                                <p class="text-sm text-slate-500">Metodologi Scrum dan Kanban dalam praktik.</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="bg-white p-6 rounded-lg shadow-lg">
-                        <h3 class="text-xl font-semibold text-slate-700 mb-4 text-center">Analisis Keterlibatan Siswa</h3>
-                        <p class="text-sm text-slate-500 mb-4 text-center max-w-xl mx-auto">Dashboard visual seperti ini dapat menyajikan data penting. Grafik di bawah ini adalah contoh bagaimana keterlibatan siswa dalam berbagai aktivitas dapat ditampilkan.</p>
-                        <div class="chart-container">
-                            <canvas id="engagementChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-                <!-- Sites Course Page -->
-                <div id="sites-course" class="hidden">
-                    <button class="mb-6 text-sm font-semibold text-sky-600 hover:text-sky-800" onclick="navigateToSiteDashboard()">&larr; Kembali ke Dashboard</button>
-                    <div class="text-left mb-8">
-                        <h2 class="text-3xl font-bold text-slate-800 mb-2">Sains Data Pemula</h2>
-                        <p class="text-slate-500 max-w-3xl">Halaman ini menyajikan semua materi kursus. Gunakan fitur "Collapsible Group" di bawah untuk membuka setiap topik. Ini meniru cara Google Sites menjaga halaman tetap bersih dan terorganisir.</p>
-                    </div>
-                    <div class="space-y-3">
-                        <div class="bg-white rounded-lg shadow-md">
-                            <button class="w-full text-left p-4 flex justify-between items-center hover:bg-slate-50 collapsible-trigger">
-                                <h4 class="font-semibold text-lg text-slate-800">1. Pendahuluan Sains Data</h4>
-                                <span class="transform transition-transform duration-300 text-sky-500">▼</span>
-                            </button>
-                            <div class="p-5 border-t border-slate-200 collapsible-content open">
-                                <p class="mb-4 text-slate-600">Pengenalan konsep dasar dan pentingnya sains data di era digital.</p>
-                                <div class="space-y-3">
-                                    <div class="flex items-center space-x-3 p-3 bg-slate-50 rounded-md"><span>📄</span><span class="text-slate-700">Silabus Kursus.pdf</span></div>
-                                    <div class="flex items-center space-x-3 p-3 bg-slate-50 rounded-md"><span>🎬</span><span class="text-slate-700">Video Perkenalan (disematkan di bawah)</span></div>
-                                </div>
-                                <div class="mt-4 aspect-w-16 aspect-h-9"><iframe src="https://www.youtube.com/embed/X3paOmcrTjQ" frameborder="0" allowfullscreen class="rounded-lg"></iframe></div>
-                            </div>
-                        </div>
-                        <div class="bg-white rounded-lg shadow-md">
-                            <button class="w-full text-left p-4 flex justify-between items-center hover:bg-slate-50 collapsible-trigger">
-                                <h4 class="font-semibold text-lg text-slate-800">2. Pengumpulan Tugas: Analisis Awal</h4>
-                                <span class="transform transition-transform duration-300 text-sky-500 rotate-180">▶</span>
-                            </button>
-                            <div class="p-5 border-t border-slate-200 collapsible-content">
-                                <p class="mb-4 text-slate-600">Untuk tugas, kita bisa menyematkan Google Form untuk pengumpulan file atau jawaban, atau menautkan langsung ke Google Classroom.</p>
-                                <div class="p-4 border-2 border-dashed border-slate-300 rounded-lg text-center">
-                                    <h5 class="font-semibold mb-2">Formulir Pengumpulan Tugas</h5>
-                                    <p class="text-sm text-slate-500 mb-4">[Simulasi Google Form Disematkan di Sini]</p>
-                                    <button class="bg-sky-500 text-white px-4 py-2 rounded-md hover:bg-sky-600">Buka Formulir</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Google Classroom View -->
-            <div id="view-classroom" class="hidden">
-                 <div class="border-b border-slate-200 mb-6">
-                    <nav class="flex -mb-px space-x-6" aria-label="Tabs">
-                        <button id="subnav-stream" class="py-4 px-1 border-b-2 font-medium text-sm border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 subnav-active" onclick="switchClassroomView('stream')">Aliran (Stream)</button>
-                        <button id="subnav-classwork" class="py-4 px-1 border-b-2 font-medium text-sm border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300" onclick="switchClassroomView('classwork')">Tugas Kelas</button>
-                    </nav>
-                </div>
-                
-                <!-- Classroom Stream -->
-                <div id="classroom-stream">
-                     <p class="text-slate-500 mb-6 max-w-3xl">Tampilan **Aliran (Stream)** di Google Classroom berfungsi seperti linimasa media sosial, menampilkan pembaruan terbaru dari guru, termasuk pengumuman, materi baru, dan tugas yang akan datang.</p>
-                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        <div class="lg:col-span-2 space-y-4">
-                            <div class="bg-white p-4 rounded-lg shadow-md flex items-start space-x-4">
-                                <div class="bg-sky-100 text-sky-600 p-3 rounded-full">📣</div>
-                                <div>
-                                    <p class="font-semibold">Guru memposting pengumuman baru: Selamat Datang!</p>
-                                    <p class="text-sm text-slate-500">Kemarin</p>
-                                </div>
-                            </div>
-                             <div class="bg-white p-4 rounded-lg shadow-md flex items-start space-x-4">
-                                <div class="bg-sky-100 text-sky-600 p-3 rounded-full">📄</div>
-                                <div>
-                                    <p class="font-semibold">Guru memposting materi baru: Silabus Kursus</p>
-                                    <p class="text-sm text-slate-500">2 hari yang lalu</p>
-                                </div>
-                            </div>
-                             <div class="bg-white p-4 rounded-lg shadow-md flex items-start space-x-4">
-                                <div class="bg-sky-100 text-sky-600 p-3 rounded-full">📝</div>
-                                <div>
-                                    <p class="font-semibold">Guru memposting tugas baru: Analisis Awal</p>
-                                    <p class="text-sm text-slate-500">3 hari yang lalu</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="bg-white p-4 rounded-lg shadow-md h-fit">
-                            <h4 class="font-semibold mb-3">Tugas Mendatang</h4>
-                            <p class="text-sm text-slate-500">Tidak ada tugas yang akan berakhir minggu ini.</p>
-                        </div>
-                     </div>
-                </div>
-
-                <!-- Classroom Classwork -->
-                <div id="classroom-classwork" class="hidden">
-                    <p class="text-slate-500 mb-6 max-w-3xl">Tampilan **Tugas Kelas** adalah tempat semua materi dan tugas diorganisir berdasarkan topik. Ini memberikan struktur yang jelas bagi siswa untuk mengikuti alur pembelajaran.</p>
-                    <div class="space-y-6">
-                        <div>
-                            <h4 class="text-xl font-bold text-sky-600 border-b-2 border-sky-500 pb-2 mb-4">1. Pendahuluan Sains Data</h4>
-                            <div class="space-y-3">
-                                <div class="bg-white p-4 rounded-lg shadow-md flex justify-between items-center">
-                                    <div class="flex items-center space-x-4">
-                                        <div class="bg-slate-100 p-3 rounded-full">📄</div>
-                                        <span class="font-medium">Materi: Silabus Kursus</span>
-                                    </div>
-                                    <span class="text-sm text-slate-400">Diposting kemarin</span>
-                                </div>
-                                <div class="bg-white p-4 rounded-lg shadow-md flex justify-between items-center">
-                                    <div class="flex items-center space-x-4">
-                                        <div class="bg-slate-100 p-3 rounded-full">🎬</div>
-                                        <span class="font-medium">Materi: Video Perkenalan</span>
-                                    </div>
-                                    <span class="text-sm text-slate-400">Diposting kemarin</span>
-                                </div>
-                            </div>
-                        </div>
-                         <div>
-                            <h4 class="text-xl font-bold text-sky-600 border-b-2 border-sky-500 pb-2 mb-4">2. Penilaian</h4>
-                             <div class="bg-white p-4 rounded-lg shadow-md flex justify-between items-center">
-                                <div class="flex items-center space-x-4">
-                                    <div class="bg-slate-100 p-3 rounded-full">📝</div>
-                                    <span class="font-medium">Tugas: Analisis Awal</span>
-                                </div>
-                                <span class="text-sm text-slate-400">Batas Waktu: 15 Agu</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <script>
-        let state = {
-            platform: 'sites',
-            sitesPage: 'dashboard',
-            classroomView: 'stream'
-        };
-
-        const views = {
-            sites: document.getElementById('view-sites'),
-            classroom: document.getElementById('view-classroom'),
-            sitesDashboard: document.getElementById('sites-dashboard'),
-            sitesCourse: document.getElementById('sites-course'),
-            classroomStream: document.getElementById('classroom-stream'),
-            classroomClasswork: document.getElementById('classroom-classwork')
-        };
-
-        const navs = {
-            sites: document.getElementById('nav-sites'),
-            classroom: document.getElementById('nav-classroom'),
-            stream: document.getElementById('subnav-stream'),
-            classwork: document.getElementById('subnav-classwork')
-        };
-
-        function updateView() {
-            // Toggle platform views
-            views.sites.classList.toggle('hidden', state.platform !== 'sites');
-            views.classroom.classList.toggle('hidden', state.platform !== 'classroom');
-
-            // Update platform nav styles
-            navs.sites.classList.toggle('nav-active', state.platform === 'sites');
-            navs.sites.classList.toggle('nav-inactive', state.platform !== 'sites');
-            navs.classroom.classList.toggle('nav-active', state.platform === 'classroom');
-            navs.classroom.classList.toggle('nav-inactive', state.platform !== 'classroom');
-
-            if (state.platform === 'sites') {
-                views.sitesDashboard.classList.toggle('hidden', state.sitesPage !== 'dashboard');
-                views.sitesCourse.classList.toggle('hidden', state.sitesPage !== 'course');
-            } else {
-                views.classroomStream.classList.toggle('hidden', state.classroomView !== 'stream');
-                views.classroomClasswork.classList.toggle('hidden', state.classroomView !== 'classwork');
-                navs.stream.classList.toggle('subnav-active', state.classroomView === 'stream');
-                navs.classwork.classList.toggle('subnav-active', state.classroomView === 'classwork');
-            }
-        }
-
-        function switchPlatform(platform) {
-            state.platform = platform;
-            updateView();
-        }
-
-        function navigateToSiteCourse() {
-            state.sitesPage = 'course';
-            updateView();
-            window.scrollTo(0, 0);
-        }
-
-        function navigateToSiteDashboard() {
-            state.sitesPage = 'dashboard';
-            updateView();
-            window.scrollTo(0, 0);
-        }
-        
-        function switchClassroomView(view) {
-            state.classroomView = view;
-            updateView();
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            // Chart.js initialization
-            const ctx = document.getElementById('engagementChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Materi Video', 'Forum Diskusi', 'Kuis', 'Tugas Praktik', 'Bacaan'],
-                    datasets: [{
-                        label: 'Waktu Interaksi (menit)',
-                        data: [68, 45, 75, 82, 35],
-                        backgroundColor: 'rgba(14, 165, 233, 0.6)', // sky-500 with opacity
-                        borderColor: 'rgba(2, 132, 199, 1)', // sky-600
-                        borderWidth: 2,
-                        borderRadius: 5
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    indexAxis: 'y',
-                    scales: {
-                        x: {
-                            beginAtZero: true,
-                            title: { display: true, text: 'Menit' }
-                        }
-                    },
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: '#0f172a', // slate-900
-                            titleFont: { size: 14 },
-                            bodyFont: { size: 12 },
-                            padding: 10,
-                            cornerRadius: 4
-                        }
-                    }
-                }
-            });
-
-            // Collapsible functionality
-            document.querySelectorAll('.collapsible-trigger').forEach(trigger => {
-                trigger.addEventListener('click', function() {
-                    const content = this.nextElementSibling;
-                    const icon = this.querySelector('span');
-                    content.classList.toggle('open');
-                    icon.classList.toggle('rotate-180');
-                    icon.textContent = content.classList.contains('open') ? '▼' : '▶';
-                });
-            });
-            
-            updateView();
-        });
-    </script>
-
+      if (token === "XTSM") {
+        window.location.href = "kelas_x/index.html";
+      } else if (token === "XITSM") {
+        window.location.href = "kelas_xi/index.html";
+      } else if (token === "XIITSM") {
+        window.location.href = "kelas_xii/index.html";
+      } else {
+        errorMsg.textContent = "Token salah. Silakan coba lagi.";
+      }
+    }
+  </script>
 </body>
 </html>
-
